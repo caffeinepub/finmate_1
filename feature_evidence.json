@@ -1,0 +1,71 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-add-a-finmate-wallet-section-to-the-home-page-frontend-src-pages-home-tsx-that-displays-the-user-s-wallet-balance-wallet-id-derived-from-the-user-s-internet-identity-principal-and-quick-action-buttons-for-send-and-receive-money",
+      "featureTitle": "Add a FinMate Wallet section to the Home page (frontend/src/pages/Home.tsx) that displays the user's wallet balance, wallet ID (derived from the user's Internet Identity principal), and quick-action buttons for Send and Receive money.",
+      "files": [
+        "frontend/src/pages/Home.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-finmate-wallet-section-to-the-profile-page-frontend-src-pages-profile-tsx-that-displays-the-user-s-wallet-id-wallet-balance-and-a-button-to-view-the-user-s-unique-qr-code",
+      "featureTitle": "Add a FinMate Wallet section to the Profile page (frontend/src/pages/Profile.tsx) that displays the user's wallet ID, wallet balance, and a button to view the user's unique QR code.",
+      "files": [
+        "frontend/src/pages/Profile.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-generate-a-unique-qr-code-per-user-based-on-their-internet-identity-principal-the-qr-code-should-encode-the-user-s-wallet-id-principal-string-and-be-displayed-in-a-modal-walletqrmodal-accessible-from-both-the-home-and-profile-wallet-sections-the-qr-code-must-be-generated-client-side-using-a-library-e-g-qrcode-react-so-each-user-sees-only-their-own-unique-code",
+      "featureTitle": "Generate a unique QR code per user based on their Internet Identity principal. The QR code should encode the user's wallet ID/principal string and be displayed in a modal (WalletQRModal) accessible from both the Home and Profile wallet sections. The QR code must be generated client-side using a library (e.g., qrcode.react) so each user sees only their own unique code.",
+      "files": [
+        "frontend/src/components/WalletQRModal.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "qr-code@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

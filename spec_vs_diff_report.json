@@ -1,0 +1,36 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-27T08:03:36.036Z",
+  "summary": "The diff implements all five requirements with good fidelity. REQ-1 (Home wallet card), REQ-2 (Profile wallet card), REQ-3 (WalletQRModal with client-side QR), REQ-4 (walletBalance in backend), and REQ-5 (walletBalance exposed via useQueries) are all present. The QR code is generated via a custom pure-TypeScript library rather than qrcode.react, which still satisfies the client-side constraint. A ScanPayModal is integrated for the Send action which was not requested. A migration module was added as a bonus.",
+  "missing_requirements": [],
+  "hallucinated_features": [
+    {
+      "description": "ScanPayModal integrated into FinMateWalletCard for the Send action button",
+      "reason": "The build request lists actual fund transfers as a non-goal and only requests Send/Receive quick-action buttons. A full ScanPayModal with QR scanner and phone-number payment entry was wired to the Send button without being requested.",
+      "evidence": [
+        "frontend/src/components/FinMateWalletCard.tsx"
+      ]
+    },
+    {
+      "description": "backend/migration.mo — a separate migration module for upgrading existing UserProfile records to include walletBalance",
+      "reason": "The build request only asked for walletBalance to be added to the UserProfile type with a default of 0 for new profiles. A full migration module handling upgrades of existing records was not requested.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.88,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/components/FinMateWalletCard.tsx",
+    "frontend/src/components/ProfileSetupModal.tsx",
+    "frontend/src/components/WalletQRModal.tsx",
+    "frontend/src/lib/qrcode.ts",
+    "frontend/src/pages/Home.tsx",
+    "frontend/src/pages/Profile.tsx",
+    "project_state.json"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Finance/wallet app with home page, profile page, and per-user QR code features being built.",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-add-a-finmate-wallet-section-to-the-home-page-frontend-src-pages-home-tsx-that-displays-the-user-s-wallet-balance-wallet-id-derived-from-the-user-s-internet-identity-principal-and-quick-action-buttons-for-send-and-receive-money",
+      "title": "Add a FinMate Wallet section to the Home page (frontend/src/pages/Home.tsx) that displays the user's wallet balance, wallet ID (derived from the user's Internet Identity principal), and quick-action buttons for Send and Receive money.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-finmate-wallet-section-to-the-profile-page-frontend-src-pages-profile-tsx-that-displays-the-user-s-wallet-id-wallet-balance-and-a-button-to-view-the-user-s-unique-qr-code",
+      "title": "Add a FinMate Wallet section to the Profile page (frontend/src/pages/Profile.tsx) that displays the user's wallet ID, wallet balance, and a button to view the user's unique QR code.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-a-unique-qr-code-per-user-based-on-their-internet-identity-principal-the-qr-code-should-encode-the-user-s-wallet-id-principal-string-and-be-displayed-in-a-modal-walletqrmodal-accessible-from-both-the-home-and-profile-wallet-sections-the-qr-code-must-be-generated-client-side-using-a-library-e-g-qrcode-react-so-each-user-sees-only-their-own-unique-code",
+      "title": "Generate a unique QR code per user based on their Internet Identity principal. The QR code should encode the user's wallet ID/principal string and be displayed in a modal (WalletQRModal) accessible from both the Home and Profile wallet sections. The QR code must be generated client-side using a library (e.g., qrcode.react) so each user sees only their own unique code.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Add Fimate wallet section to home page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add Fimate wallet section to profile page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Generate a separate unique QR code for each user",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add a walletBalance field (Nat, defaulting to 0) to the UserProfile type in the backend (backend/main.mo) to persist and retrieve each user's FinMate wallet balance.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Update useQueries.ts to expose the walletBalance field from UserProfile in the existing profile query hook so the frontend wallet components can read and display it.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Fimate",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
