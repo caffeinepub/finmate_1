@@ -1,80 +1,28 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add FinMate Wallet to Home & Profile Pages with Per-User QR Codes",
+  "title": "Fix Check Balance on Home page with PIN or fingerprint authentication",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add a FinMate Wallet section to the Home page displaying wallet balance, wallet ID (derived from Internet Identity principal), and Send/Receive quick-action buttons",
+      "summary": "Add PIN or biometric authentication gate to the 'Check Balance' quick-action button on the Home page before revealing the balance",
       "acceptanceCriteria": [
-        "A FinMate Wallet card is visible on the Home page",
-        "The wallet card displays the user's wallet balance (can be 0 by default)",
-        "The wallet card shows a unique wallet ID derived from the user's principal",
-        "Send and Receive quick-action buttons are present on the wallet card",
-        "The wallet card matches the existing FinMate visual design (gradients, glass card style)"
+        "Tapping 'Check Balance' on the Home page opens a PIN entry prompt or offers a fingerprint/biometric option.",
+        "The balance is only revealed after the user successfully enters their PIN or passes biometric authentication.",
+        "If PIN entry is cancelled or fails, the balance remains hidden.",
+        "The BalanceCard auto-hides the balance after 30 seconds of visibility (existing behaviour preserved).",
+        "The fingerprint/biometric option is shown alongside the PIN option, consistent with the PinEntry screen pattern."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/Home.tsx",
           "operation": "modify",
-          "description": "Add a WalletCard component rendering above or alongside the existing quick-action buttons section. Display the wallet balance fetched from the user profile query, derive the wallet ID from the authenticated user's principal using identity.getPrincipal().toString(), and include two action buttons: 'Send' (opens ScanPayModal for sending money) and 'Receive' (opens WalletQRModal to show the user's unique QR code). Style the card using the existing glass card classes (glass-card, gradient-border) to match the FinMate design system."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Add a FinMate Wallet section to the Profile page displaying wallet ID, wallet balance, and a button to view the user's unique QR code",
-      "acceptanceCriteria": [
-        "A FinMate Wallet card is visible on the Profile page",
-        "The wallet card shows the user's wallet ID and current wallet balance",
-        "A 'Show QR Code' button is present that opens the QR code modal",
-        "The section is visually consistent with other Profile page sections"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Profile.tsx",
-          "operation": "modify",
-          "description": "Add a WalletInfoSection component below the profile header or alongside the bank accounts section. Display the wallet balance from the user profile query and the wallet ID derived from the user's principal. Include a 'Show QR Code' button that opens the WalletQRModal. Use the same card styling patterns as existing Profile sections (glass-card, consistent spacing)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Generate a unique QR code per user based on their Internet Identity principal and display it in a modal accessible from both Home and Profile wallet sections",
-      "acceptanceCriteria": [
-        "Tapping 'Receive' on Home or 'Show QR Code' on Profile opens a QR code modal",
-        "The QR code encodes the user's unique principal/wallet ID string",
-        "Each user sees a different QR code (derived from their own principal)",
-        "The modal displays the user's wallet ID text below the QR code for easy sharing",
-        "The modal has a close/dismiss button",
-        "QR code is generated entirely on the frontend with no backend dependency"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/WalletQRModal.tsx",
-          "operation": "create",
-          "description": "Create a modal dialog component that accepts isOpen, onClose, and walletId props. Use the qrcode.react library (QRCodeSVG component) to generate a QR code encoding the walletId string (the user's principal). Display the QR code centered in the modal, show the wallet ID text below it for manual sharing, and include a close button. Style the modal consistently with other FinMate modals (glass-card, gradient-border, backdrop blur). Ensure the QR code is generated client-side and never sent to the backend."
+          "description": "Add state management for showing the PinConfirmationModal when the 'Check Balance' quick-action button is clicked. Wire the modal's onSuccess callback to set showBalanceCard to true, and onCancel to keep it hidden. This ensures the balance is only revealed after successful PIN entry or biometric authentication."
         },
         {
-          "path": "frontend/package.json",
+          "path": "frontend/src/components/PinConfirmationModal.tsx",
           "operation": "modify",
-          "description": "Add the qrcode.react library as a dependency (e.g., \"qrcode.react\": \"^3.1.0\") to support client-side QR code generation. Also add @types/qrcode.react if TypeScript types are needed."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Update useQueries.ts to expose the walletBalance field from UserProfile so frontend wallet components can read and display it",
-      "acceptanceCriteria": [
-        "The profile query result exposes walletBalance",
-        "Home and Profile wallet cards display the correct walletBalance from the backend",
-        "No TypeScript type errors related to walletBalance"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Ensure the useGetCallerUserProfile hook returns the walletBalance field from the UserProfile type. Verify that the TypeScript backend interface (backend.d.ts) already includes walletBalance: bigint in UserProfile, and that the query hook exposes it without modification. If walletBalance is missing from the returned profile object, add a fallback value of 0n. Format walletBalance as a currency string in the utility functions if needed for display purposes."
+          "description": "Add a biometric/fingerprint authentication option to the modal UI, similar to the pattern used in PinEntry.tsx. Include a fingerprint icon button that calls simulateBiometric from usePinAuth. On successful biometric authentication, invoke onSuccess immediately. Ensure the biometric button is positioned prominently alongside the PIN keypad for easy user access."
         }
       ]
     }

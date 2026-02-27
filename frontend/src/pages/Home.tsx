@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
+import React, { useState, useEffect, useRef } from 'react';
+import { useGetCallerUserProfile, useGetBankAccounts, formatCurrency } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import AdBanner from '../components/AdBanner';
 import RechargeModal from '../components/RechargeModal';
@@ -11,16 +11,48 @@ import ChallengesSection from '../components/ChallengesSection';
 import CustomerFeedbackSection from '../components/CustomerFeedbackSection';
 import AIChatbotFAB from '../components/AIChatbotFAB';
 import FinMateWalletCard from '../components/FinMateWalletCard';
-import { Trophy, Bell, Wallet, Zap, Ticket, SendHorizonal } from 'lucide-react';
+import PinConfirmationModal from '../components/PinConfirmationModal';
+import { Trophy, Bell, Wallet, Zap, Ticket, SendHorizonal, EyeOff, Lock } from 'lucide-react';
 
 export default function Home() {
   const { data: userProfile } = useGetCallerUserProfile();
   const { identity } = useInternetIdentity();
+  const { data: accounts = [] } = useGetBankAccounts();
 
   const [rechargeOpen, setRechargeOpen] = useState(false);
   const [ticketOpen, setTicketOpen] = useState(false);
   const [scanPayOpen, setScanPayOpen] = useState(false);
   const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [balancePinOpen, setBalancePinOpen] = useState(false);
+  const [balanceVisible, setBalanceVisible] = useState(false);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+
+  const handleCheckBalance = () => {
+    if (balanceVisible) {
+      // Already visible — hide it
+      setBalanceVisible(false);
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    } else {
+      setBalancePinOpen(true);
+    }
+  };
+
+  const handlePinSuccess = () => {
+    setBalancePinOpen(false);
+    setBalanceVisible(true);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => {
+      setBalanceVisible(false);
+    }, 30000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    };
+  }, []);
 
   const greeting = () => {
     const hour = new Date().getHours();
@@ -33,11 +65,11 @@ export default function Home() {
 
   const quickActions = [
     {
-      label: 'Check Balance',
-      icon: <Wallet className="w-6 h-6" />,
+      label: balanceVisible ? 'Hide Balance' : 'Check Balance',
+      icon: balanceVisible ? <EyeOff className="w-6 h-6" /> : <Wallet className="w-6 h-6" />,
       color: 'text-emerald-600 dark:text-emerald-400',
       bg: 'bg-emerald-50 dark:bg-emerald-950/40',
-      onClick: () => setLeaderboardOpen(false),
+      onClick: handleCheckBalance,
     },
     {
       label: 'Recharge',
@@ -66,7 +98,7 @@ export default function Home() {
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-primary text-primary-foreground px-4 pt-12 pb-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-primary-foreground/70 text-sm">{greeting()},</p>
             <h1 className="text-xl font-bold">{userProfile?.name || 'User'} 👋</h1>
@@ -82,6 +114,50 @@ export default function Home() {
               <Bell className="w-5 h-5" />
             </button>
           </div>
+        </div>
+
+        {/* Balance Card inside header */}
+        <div className="bg-primary-foreground/10 rounded-2xl p-4 border border-primary-foreground/20">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-primary-foreground/70 text-xs mb-1">Total Balance</p>
+              {balanceVisible ? (
+                <div className="flex items-center gap-2">
+                  <p className="text-2xl font-bold text-primary-foreground">{formatCurrency(totalBalance)}</p>
+                  <button
+                    onClick={() => {
+                      setBalanceVisible(false);
+                      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+                    }}
+                    className="text-primary-foreground/70 hover:text-primary-foreground"
+                  >
+                    <EyeOff className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <p className="text-2xl font-bold text-primary-foreground tracking-widest">••••••</p>
+              )}
+            </div>
+            <button
+              onClick={handleCheckBalance}
+              className="flex flex-col items-center gap-1 bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors rounded-xl px-3 py-2 active:scale-95"
+            >
+              <div className="flex items-center gap-1">
+                <Wallet className="w-6 h-6 text-primary-foreground" />
+                {!balanceVisible && <Lock className="w-3 h-3 text-primary-foreground/70" />}
+              </div>
+              <span className="text-xs text-primary-foreground/80 font-medium">
+                {balanceVisible ? 'Hide' : 'Check Balance'}
+              </span>
+            </button>
+          </div>
+          {balanceVisible && (
+            <div className="mt-3 pt-3 border-t border-primary-foreground/20">
+              <p className="text-primary-foreground/60 text-xs">
+                {accounts.length} account{accounts.length !== 1 ? 's' : ''} linked • Auto-hides in 30s
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -135,6 +211,13 @@ export default function Home() {
       <TicketBookingModal open={ticketOpen} onClose={() => setTicketOpen(false)} />
       <ScanPayModal open={scanPayOpen} onClose={() => setScanPayOpen(false)} />
       <LeaderboardModal isOpen={leaderboardOpen} onClose={() => setLeaderboardOpen(false)} />
+      <PinConfirmationModal
+        open={balancePinOpen}
+        onClose={() => setBalancePinOpen(false)}
+        onSuccess={handlePinSuccess}
+        title="Check Balance"
+        description="Enter your PIN or use fingerprint to view your balance"
+      />
 
       {/* AI Chatbot FAB */}
       <AIChatbotFAB />

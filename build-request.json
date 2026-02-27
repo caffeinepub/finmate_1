@@ -1,117 +1,40 @@
 {
   "kind": "build_request",
-  "title": "Add FinMate Wallet to Home & Profile Pages with Per-User QR Codes",
+  "title": "Fix Check Balance on Home page with PIN or fingerprint authentication",
   "projectName": "FinMate",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a FinMate Wallet section to the Home page (frontend/src/pages/Home.tsx) that displays the user's wallet balance, wallet ID (derived from the user's Internet Identity principal), and quick-action buttons for Send and Receive money.",
+      "text": "Fix the 'Check Balance' quick-action button on the Home page so that tapping it triggers a PIN confirmation modal (using PinConfirmationModal) or biometric/fingerprint authentication (using the simulateBiometric helper from usePinAuth) before revealing the balance. The balance must not be visible until the user successfully authenticates.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "add fimate wallet in home page"
+          "check balance in home page should be fixed and by pin or fingerprint"
         ]
       },
       "acceptanceCriteria": [
-        "A FinMate Wallet card is visible on the Home page",
-        "The wallet card displays the user's wallet balance (can be 0 by default)",
-        "The wallet card shows a unique wallet ID derived from the user's principal",
-        "Send and Receive quick-action buttons are present on the wallet card",
-        "The wallet card matches the existing FinMate visual design (gradients, glass card style)"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Add a FinMate Wallet section to the Profile page (frontend/src/pages/Profile.tsx) that displays the user's wallet ID, wallet balance, and a button to view the user's unique QR code.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "add fimate wallet in profile page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A FinMate Wallet card is visible on the Profile page",
-        "The wallet card shows the user's wallet ID and current wallet balance",
-        "A 'Show QR Code' button is present that opens the QR code modal",
-        "The section is visually consistent with other Profile page sections"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Generate a unique QR code per user based on their Internet Identity principal. The QR code should encode the user's wallet ID/principal string and be displayed in a modal (WalletQRModal) accessible from both the Home and Profile wallet sections. The QR code must be generated client-side using a library (e.g., qrcode.react) so each user sees only their own unique code.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "separate qr code for each user"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Tapping 'Receive' on Home or 'Show QR Code' on Profile opens a QR code modal",
-        "The QR code encodes the user's unique principal/wallet ID string",
-        "Each user sees a different QR code (derived from their own principal)",
-        "The modal displays the user's wallet ID text below the QR code for easy sharing",
-        "The modal has a close/dismiss button",
-        "QR code is generated entirely on the frontend with no backend dependency"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Add a walletBalance field (Nat, defaulting to 0) to the UserProfile type in the backend (backend/main.mo) to persist and retrieve each user's FinMate wallet balance.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "add fimate wallet in home page and profile page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "UserProfile type includes a walletBalance field of type Nat",
-        "Existing profile queries return the walletBalance value",
-        "New profiles are created with walletBalance defaulting to 0",
-        "The backend compiles without errors"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Update useQueries.ts to expose the walletBalance field from UserProfile in the existing profile query hook so the frontend wallet components can read and display it.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "add fimate wallet in home page and profile page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The profile query result exposes walletBalance",
-        "Home and Profile wallet cards display the correct walletBalance from the backend",
-        "No TypeScript type errors related to walletBalance"
+        "Tapping 'Check Balance' on the Home page opens a PIN entry prompt or offers a fingerprint/biometric option.",
+        "The balance is only revealed after the user successfully enters their PIN or passes biometric authentication.",
+        "If PIN entry is cancelled or fails, the balance remains hidden.",
+        "The BalanceCard auto-hides the balance after 30 seconds of visibility (existing behaviour preserved).",
+        "The fingerprint/biometric option is shown alongside the PIN option, consistent with the PinEntry screen pattern."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
-    "QR code generation must be entirely client-side; do not store or process QR codes on the backend",
-    "Wallet ID must be derived from the user's Internet Identity principal — do not generate a separate random ID"
+    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "Reuse the existing PinConfirmationModal component and usePinAuth hook; do not create a separate auth mechanism.",
+    "The balance display logic in BalanceCard must remain intact; only the trigger/gate on the Home page needs fixing."
   ],
   "nonGoals": [
-    "Actual fund transfers or on-chain token transactions",
-    "Integration with any external payment network or blockchain wallet",
-    "Push notifications for wallet activity",
-    "Wallet transaction history (separate from existing bank transaction history)"
+    "Changing the balance display on the Profile page.",
+    "Modifying the backend schema or any Motoko files.",
+    "Adding a new PIN setup or PIN change flow.",
+    "Altering the FinMateWalletCard show/hide toggle behaviour."
   ],
   "imageRequirements": {
     "required": [],

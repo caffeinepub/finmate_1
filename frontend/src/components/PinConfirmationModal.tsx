@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { usePinAuth } from '../hooks/usePinAuth';
-import { Lock, X } from 'lucide-react';
+import { Lock, X, Fingerprint } from 'lucide-react';
 
 interface PinConfirmationModalProps {
   open: boolean;
@@ -17,11 +17,12 @@ export default function PinConfirmationModal({
   onClose,
   onSuccess,
   title = 'Confirm PIN',
-  description = 'Enter your 4-digit PIN to continue',
+  description = 'Enter your 4-digit PIN or use fingerprint to continue',
 }: PinConfirmationModalProps) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
-  const { verifyPin } = usePinAuth();
+  const [biometricLoading, setBiometricLoading] = useState(false);
+  const { verifyPin, biometricEnabled, simulateBiometric } = usePinAuth();
 
   const handleDigit = (digit: string) => {
     if (pin.length < 4) {
@@ -48,9 +49,27 @@ export default function PinConfirmationModal({
     setError('');
   };
 
+  const handleBiometric = async () => {
+    setBiometricLoading(true);
+    setError('');
+    try {
+      const ok = await simulateBiometric();
+      if (ok) {
+        onSuccess();
+      } else {
+        setError('Biometric authentication failed. Please use your PIN.');
+      }
+    } catch {
+      setError('Biometric authentication failed. Please use your PIN.');
+    } finally {
+      setBiometricLoading(false);
+    }
+  };
+
   const handleClose = () => {
     setPin('');
     setError('');
+    setBiometricLoading(false);
     onClose();
   };
 
@@ -94,7 +113,19 @@ export default function PinConfirmationModal({
               {d}
             </button>
           ))}
-          <div />
+          {/* Fingerprint button in bottom-left */}
+          <button
+            onClick={handleBiometric}
+            disabled={biometricLoading}
+            className="h-14 rounded-xl bg-muted hover:bg-muted/80 text-primary transition-colors active:scale-95 flex items-center justify-center disabled:opacity-50"
+            title="Use fingerprint"
+          >
+            {biometricLoading ? (
+              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Fingerprint className="w-6 h-6" />
+            )}
+          </button>
           <button
             onClick={() => handleDigit('0')}
             className="h-14 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-xl font-semibold transition-colors active:scale-95"
@@ -108,6 +139,12 @@ export default function PinConfirmationModal({
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Fingerprint hint */}
+        <p className="text-center text-xs text-muted-foreground mt-1">
+          <Fingerprint className="w-3 h-3 inline mr-1" />
+          Tap the fingerprint icon to authenticate with biometrics
+        </p>
 
         <Button variant="ghost" onClick={handleClose} className="mt-2 w-full">
           Cancel

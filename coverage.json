@@ -1,84 +1,37 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-27T08:03:36.039Z",
+  "generatedAt": "2026-02-27T08:36:44.663Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 3,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a FinMate Wallet section to the Home page (frontend/src/pages/Home.tsx) that displays the user's wallet balance, wallet ID (derived from the user's Internet Identity principal), and quick-action buttons for Send and Receive money.",
+        "summary": "Fix the 'Check Balance' quick-action button on the Home page so that tapping it triggers a PIN confirmation modal (using PinConfirmationModal) or biometric/fingerprint authentication (using the simulateBiometric helper from usePinAuth) before revealing the balance. The balance must not be visible until the user successfully authenticates.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Home.tsx"
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/components/PinConfirmationModal.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/Home.tsx"
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/components/PinConfirmationModal.tsx"
         ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Add a FinMate Wallet section to the Profile page (frontend/src/pages/Profile.tsx) that displays the user's wallet ID, wallet balance, and a button to view the user's unique QR code.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/Profile.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Profile.tsx"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Generate a unique QR code per user based on their Internet Identity principal. The QR code should encode the user's wallet ID/principal string and be displayed in a modal (WalletQRModal) accessible from both the Home and Profile wallet sections. The QR code must be generated client-side using a library (e.g., qrcode.react) so each user sees only their own unique code.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/WalletQRModal.tsx",
-          "frontend/package.json"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/WalletQRModal.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Add a walletBalance field (Nat, defaulting to 0) to the UserProfile type in the backend (backend/main.mo) to persist and retrieve each user's FinMate wallet balance.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Update useQueries.ts to expose the walletBalance field from UserProfile in the existing profile query hook so the frontend wallet components can read and display it.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/FinMateWalletCard.tsx",
-    "frontend/src/components/ProfileSetupModal.tsx",
-    "frontend/src/components/WalletQRModal.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/lib/qrcode.ts",
+    "frontend/src/components/PinConfirmationModal.tsx",
     "frontend/src/pages/Home.tsx",
-    "frontend/src/pages/Profile.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

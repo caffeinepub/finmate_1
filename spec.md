@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add a FinMate Wallet section to the Home and Profile pages with per-user QR codes derived from each user's Internet Identity principal.
+**Goal:** Fix the "Check Balance" quick-action button on the Home page so that it requires PIN or fingerprint authentication before revealing the account balance.
 
 **Planned changes:**
-- Add a FinMate Wallet card to the Home page showing wallet balance, wallet ID, and Send/Receive quick-action buttons
-- Add a FinMate Wallet card to the Profile page showing wallet ID, balance, and a "Show QR Code" button
-- Create a `WalletQRModal` component that generates a unique QR code client-side (using qrcode.react) based on the user's principal, accessible from both Home and Profile wallet sections
-- Add a `walletBalance` field (Nat, default 0) to the `UserProfile` type in the backend
-- Update `useQueries.ts` to expose `walletBalance` from the profile query hook
+- Update the "Check Balance" quick-action handler on the Home page to open the `PinConfirmationModal` or trigger biometric authentication via the `simulateBiometric` helper from `usePinAuth` before showing the balance.
+- Ensure the balance remains hidden if the user cancels or fails authentication.
+- Preserve the existing 30-second auto-hide behaviour of `BalanceCard` after successful authentication.
+- Show the fingerprint/biometric option alongside the PIN option, consistent with the PinEntry screen pattern.
 
-**User-visible outcome:** Users see their FinMate Wallet with balance and wallet ID on both the Home and Profile pages, and can open a modal showing their unique personal QR code (based on their Internet Identity principal) for receiving money.
+**User-visible outcome:** Tapping "Check Balance" on the Home page now prompts the user to authenticate via PIN or fingerprint before the balance is revealed, keeping it secure until verified.
